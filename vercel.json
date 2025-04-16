@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/public-routes/home" },
+    { "source": "/home", "destination": "/public-routes/home" },
+    { "source": "/cursos", "destination": "/public-routes/cursos" },
+    { "source": "/cursos/:id", "destination": "/public-routes/cursos/:id" },
+    { "source": "/cursos/:id/learn", "destination": "/public-routes/cursos/:id/learn" },
+    { "source": "/blog", "destination": "/public-routes/blog" },
+    { "source": "/blog/:id", "destination": "/public-routes/blog/:id" },
+    { "source": "/eventos", "destination": "/public-routes/eventos" },
+    { "source": "/eventos/:id", "destination": "/public-routes/eventos/:id" }
+  ],
+  "builds": [
+    {
+      "src": "next.config.mjs",
+      "use": "@vercel/next"
+    }
+  ],
+  "buildCommand": "npm run build"
+} 
