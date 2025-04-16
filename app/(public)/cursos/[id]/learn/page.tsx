@@ -27,6 +27,35 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
+// Definir interfaces para tipos de lecciones
+interface BaseLesson {
+  id: string;
+  type: string;
+  title: string;
+  duration: string;
+  completed: boolean;
+  description: string;
+}
+
+interface VideoLesson extends BaseLesson {
+  type: "video";
+  videoUrl: string;
+  resources?: Array<{name: string; type: string; size: string}>;
+  transcript?: string;
+}
+
+interface ArticleLesson extends BaseLesson {
+  type: "article";
+  content: string;
+}
+
+interface QuizLesson extends BaseLesson {
+  type: "quiz";
+  questions: number;
+}
+
+type Lesson = VideoLesson | ArticleLesson | QuizLesson;
+
 export default function LearnPage({ params }: { params: { id: string } }) {
   const [currentModule, setCurrentModule] = useState(0)
   const [currentLesson, setCurrentLesson] = useState(0)
@@ -74,7 +103,7 @@ export default function LearnPage({ params }: { params: { id: string } }) {
             completed: true,
             questions: 10
           }
-        ]
+        ] as Lesson[]
       },
       {
         title: "Módulo 2: Fundamentos teóricos",
@@ -97,15 +126,16 @@ export default function LearnPage({ params }: { params: { id: string } }) {
             title: "Análisis detallado",
             duration: "20 min lectura",
             completed: false,
-            description: "Profundización en los conceptos clave."
+            description: "Profundización en los conceptos clave.",
+            content: ""
           }
-        ]
+        ] as Lesson[]
       }
     ]
   }
 
   const currentModuleContent = courseContent.modules[currentModule]
-  const currentLessonContent = currentModuleContent.lessons[currentLesson]
+  const currentLessonContent = currentModuleContent.lessons[currentLesson] as Lesson
   
   const navigateToLesson = (moduleIndex: number, lessonIndex: number) => {
     setCurrentModule(moduleIndex)
@@ -221,7 +251,7 @@ export default function LearnPage({ params }: { params: { id: string } }) {
 
             {currentLessonContent.type === 'article' && (
               <div className="prose prose-blue max-w-none mb-8">
-                {currentLessonContent.content}
+                {('content' in currentLessonContent) ? currentLessonContent.content : 'Contenido no disponible'}
               </div>
             )}
 
@@ -229,7 +259,7 @@ export default function LearnPage({ params }: { params: { id: string } }) {
               <div className="bg-white rounded-xl border p-6 mb-8">
                 <h2 className="text-xl font-semibold mb-4">Evaluación</h2>
                 <p className="text-gray-600 mb-4">
-                  Esta evaluación contiene {currentLessonContent.questions} preguntas y tiene una duración estimada de {currentLessonContent.duration}.
+                  Esta evaluación contiene {('questions' in currentLessonContent) ? currentLessonContent.questions : 0} preguntas y tiene una duración estimada de {currentLessonContent.duration}.
                 </p>
                 <Button>
                   Comenzar evaluación
@@ -244,7 +274,7 @@ export default function LearnPage({ params }: { params: { id: string } }) {
           <ScrollArea className="h-full">
             <div className="p-6 space-y-6">
               {/* Resources Section */}
-              {currentLessonContent.resources && (
+              {('resources' in currentLessonContent) && currentLessonContent.resources && (
                 <section className="space-y-4">
                   <h2 className="text-lg font-semibold flex items-center gap-2">
                     <DownloadIcon className="h-5 w-5 text-blue-500" />
@@ -273,7 +303,7 @@ export default function LearnPage({ params }: { params: { id: string } }) {
               )}
 
               {/* Transcript Section */}
-              {currentLessonContent.transcript && (
+              {('transcript' in currentLessonContent) && currentLessonContent.transcript && (
                 <section className="space-y-4">
                   <h2 className="text-lg font-semibold flex items-center gap-2">
                     <FileTextIcon className="h-5 w-5 text-purple-500" />
@@ -316,10 +346,21 @@ function CourseSidebar({
   currentLesson, 
   onNavigate 
 }: { 
-  content: any
-  currentModule: number
-  currentLesson: number
-  onNavigate: (moduleIndex: number, lessonIndex: number) => void
+  content: {
+    title: string;
+    totalLessons: number;
+    completedLessons: number;
+    modules: Array<{
+      title: string;
+      duration: string;
+      isUnlocked: boolean;
+      progress: number;
+      lessons: Lesson[];
+    }>;
+  };
+  currentModule: number;
+  currentLesson: number;
+  onNavigate: (moduleIndex: number, lessonIndex: number) => void;
 }) {
   return (
     <ScrollArea className="h-full">
@@ -329,7 +370,7 @@ function CourseSidebar({
         </div>
 
         <Accordion type="multiple" defaultValue={[`module-${currentModule}`]} className="space-y-4">
-          {content.modules.map((module: any, moduleIndex: number) => (
+          {content.modules.map((module, moduleIndex: number) => (
             <AccordionItem 
               key={moduleIndex} 
               value={`module-${moduleIndex}`}
@@ -352,7 +393,7 @@ function CourseSidebar({
               </AccordionTrigger>
               <AccordionContent>
                 <div className="divide-y">
-                  {module.lessons.map((lesson: any, lessonIndex: number) => (
+                  {module.lessons.map((lesson: Lesson, lessonIndex: number) => (
                     <div
                       key={lessonIndex}
                       className={`flex items-center gap-3 p-4 text-sm cursor-pointer transition-colors
