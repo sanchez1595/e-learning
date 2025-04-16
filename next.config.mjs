@@ -29,6 +29,58 @@ const nextConfig = {
     }
     return config;
   },
+  // Redirecciones para mantener las URL originales
+  async redirects() {
+    return [
+      // Redirigir rutas originales a public-routes
+      {
+        source: '/public-routes/:path*',
+        destination: '/:path*',
+        permanent: false,
+      },
+      // Rutas específicas
+      {
+        source: '/public-routes/home',
+        destination: '/home',
+        permanent: false,
+      },
+      {
+        source: '/public-routes/cursos',
+        destination: '/cursos',
+        permanent: false,
+      },
+      {
+        source: '/public-routes/cursos/:id',
+        destination: '/cursos/:id',
+        permanent: false,
+      },
+      {
+        source: '/public-routes/cursos/:id/learn',
+        destination: '/cursos/:id/learn',
+        permanent: false,
+      },
+      {
+        source: '/public-routes/blog',
+        destination: '/blog',
+        permanent: false,
+      },
+      {
+        source: '/public-routes/blog/:id',
+        destination: '/blog/:id',
+        permanent: false,
+      },
+      {
+        source: '/public-routes/eventos',
+        destination: '/eventos',
+        permanent: false,
+      },
+      {
+        source: '/public-routes/eventos/:id',
+        destination: '/eventos/:id',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
