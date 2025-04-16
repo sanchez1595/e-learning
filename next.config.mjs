@@ -29,54 +29,52 @@ const nextConfig = {
     }
     return config;
   },
-  // Redirecciones para mantener las URL originales
+  // Redirecciones para mantener URLs limpias
   async redirects() {
     return [
-      // Redirigir rutas originales a public-routes
       {
-        source: '/public-routes/:path*',
-        destination: '/:path*',
-        permanent: false,
-      },
-      // Rutas específicas
-      {
-        source: '/public-routes/home',
+        source: '/',
         destination: '/home',
+        permanent: true,
+      },
+      {
+        source: '/home',
+        destination: '/public-routes/home',
         permanent: false,
       },
       {
-        source: '/public-routes/cursos',
-        destination: '/cursos',
+        source: '/cursos',
+        destination: '/public-routes/cursos',
         permanent: false,
       },
       {
-        source: '/public-routes/cursos/:id',
-        destination: '/cursos/:id',
+        source: '/cursos/:id',
+        destination: '/public-routes/cursos/:id',
         permanent: false,
       },
       {
-        source: '/public-routes/cursos/:id/learn',
-        destination: '/cursos/:id/learn',
+        source: '/cursos/:id/learn',
+        destination: '/public-routes/cursos/:id/learn',
         permanent: false,
       },
       {
-        source: '/public-routes/blog',
-        destination: '/blog',
+        source: '/blog',
+        destination: '/public-routes/blog',
         permanent: false,
       },
       {
-        source: '/public-routes/blog/:id',
-        destination: '/blog/:id',
+        source: '/blog/:id',
+        destination: '/public-routes/blog/:id',
         permanent: false,
       },
       {
-        source: '/public-routes/eventos',
-        destination: '/eventos',
+        source: '/eventos',
+        destination: '/public-routes/eventos',
         permanent: false,
       },
       {
-        source: '/public-routes/eventos/:id',
-        destination: '/eventos/:id',
+        source: '/eventos/:id',
+        destination: '/public-routes/eventos/:id',
         permanent: false,
       },
     ];
